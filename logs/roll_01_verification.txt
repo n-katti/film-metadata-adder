@@ -1,0 +1,15 @@
+Film Metadata Verification Report
+===================================
+
+Generated: 2026-07-14 01:49:23.558241
+Roll: 01
+Camera: Canon Sure Shot 80u
+Film: Fujifilm 400 35mm
+
+Summary
+-----------------------------------
+Total frames processed: 36
+Passed: 36
+Failed: 0
+
+All frames passed verification.

@@ -1,0 +1,37 @@
+Timestamp | Latitude | Longitude | Description
+2026-05-08T14:47:40-04:00 | 33.77751 | -84.38549 | Snot at home
+2026-05-09T13:40:20-04:00 | 40.71975 | -73.96026 | AL on streets of Brooklyn
+2026-05-09T13:41:20-04:00 | 40.71975 | -73.96026 | NK on streets of Brooklyn
+2026-05-09T16:24:29-04:00 | 40.72067 | -73.95874 | AL sleeping
+2026-05-09T19:39:53-04:00 | 40.71480 | -73.96070 | AL in front of light colored building
+2026-05-09T19:44:20-04:00 | 40.71167 | -73.95771 | Nikhil and AL selfie at pizza restaurant
+2026-05-09T20:25:47-04:00 | 40.71422 | -73.9494 | Dinner at Pomp and Circumstance
+2026-05-09T21:18:38-04:00 | 40.71424 | -73.94956 | At dinner pomp and circumstance with food on table
+2026-05-09T21:46:40-04:00 | 40.71382 | -73.95166 | Subway station
+2026-05-09T22:24:01-04:00 | 40.70323 | -73.99329 | Nikhil Brooklyn bridge
+2026-05-09T22:24:10-04:00 | 40.70326 | -73.99333 | Selfie Brooklyn bridge
+2026-05-09T22:27:29-04:00 | 40.70349 | -73.99364 | AL Brooklyn bride no flash
+2026-05-09T22:27:39-04:00 | 40.7035 | -73.99366 | AL Brooklyn bridge flash
+2026-05-10T13:56:53-04:00 | 40.70373 | -73.9309 | AL at Sey
+2026-05-10T13:57:09-04:00 | 40.70373 | -73.93089 | Nikhil at Sey
+2026-05-10T14:26:07-04:00 | 40.71081 | -73.96467 | AL walking to domino park buildings
+2026-05-10T14:26:29-04:00 | 40.71091 | -73.96496 | Nikhil walking to domino park picture
+2026-05-10T14:36:00-04:00 | 40.71315 | -73.96857 | Williamsburg bridge
+2026-05-10T14:36:25-04:00 | 40.71306 | -73.96862 | AL through the bushes at Williamsburg bridge
+2026-05-10T14:45:25-04:00 | 40.71355 | -73.96863 | Domino sugar factory
+2026-05-10T23:06:03-04:00 | 40.7309 | -74.00076 | Nikhil in front of comedy cellar
+2026-05-11T12:27:15-04:00 | 40.72502 | -73.95355 | Cat on building
+2026-05-11T12:29:14-04:00 | 40.72543 | -73.95382 | Nikhil colorful houses
+2026-05-11T12:29:30-04:00 | 40.72558 | -73.95387 | AL cool houses
+2026-05-11T12:29:51-04:00 | 40.72565 | -73.95389 | Nikhil cool houses again
+2026-05-14T13:10:58-04:00 | 33.77751 | -84.38543 | AL holding Snot in my kitchen
+2026-05-28T20:01:01+05:30 | 12.90722 | 77.54863 | People looking at the rain off Utarahalli balcony
+2026-05-30T17:55:48+05:30 | 13.27254 | 74.7323 | Anne Louise standing by Indian water
+2026-05-30T17:55:59+05:30 | 13.27257 | 74.73233 | Anne Louise and Nisha by Indian water
+2026-05-30T17:56:13+05:30 | 13.27268 | 74.73245 | Anne Louise and Nikhil by Indian water
+2026-05-31T19:14:13+05:30 | 13.4496 | 74.69512 | AL Bengre Beach
+2026-05-31T19:15:05+05:30 | 13.4496 | 74.69512 | Nisha and Aaron Bengre Beach
+2026-05-31T19:15:45+05:30 | 13.4496 | 74.69512 | Nikhil and AL Bengre Beach
+2026-05-31T19:15:46+05:30 | 13.4496 | 74.69512 | Nikhil and AL Bengre Beach again
+2026-06-02T00:44:03+05:30 | 12.90446 | 77.54875 | AL in bed horizontal
+2026-06-02T00:45:03+05:30 | 12.90446 | 77.54875 | AL in bed portrait

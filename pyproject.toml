@@ -1,0 +1,10 @@
+[project]
+name = "film-metadata-adder"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "pathlib>=1.0.1",
+    "pyexiftool>=0.5.6",
+]
