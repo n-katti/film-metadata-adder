@@ -1,41 +1,55 @@
 import exiftool
+
 from pathlib import Path
 from datetime import datetime
 import shutil
 
 
 # SET THESE VARIABLES
+
 camera_make = "Canon"
 camera_model = "Sure Shot 80u"
 film_stock = "Fujifilm 400"
 film_format = "35mm"
 
-# Variables for the roll folder and roll number
+
+# VARIABLES FOR THE ROLL FOLDER AND ROLL NUMBER
+
 roll_folder = Path("rolls/")
 roll_folder.mkdir(exist_ok=True)
-roll_number = "01"
 
-# Roll path variables
+roll_number = "02"
+
+
+# ROLL PATH VARIABLES
+
 roll_path = Path(roll_folder) / f"roll_{roll_number}.txt"
 
-# Scan JPG path variables
+
+# SCAN JPG PATH VARIABLES
+
 scan_path = Path("scans/")
 scan_path.mkdir(exist_ok=True)
 
-# Output path variables
+
+# OUTPUT PATH VARIABLES
+
 output_path = Path("output/")
 output_path.mkdir(exist_ok=True)
 
-# Log variables
+
+# LOG VARIABLES
+
 log_path = Path("logs")
 log_path.mkdir(exist_ok=True)
-report_path = Path("logs") / f"roll_{roll_number}_verification.txt"
+
+report_path = log_path / f"roll_{roll_number}_verification.txt"
+
 verification_results = []
 
 
-
-
 # Imports metadata from the film log file and returns a list of dictionaries
+
 def import_metadata_file():
     film_log_data = []
 
@@ -46,31 +60,68 @@ def import_metadata_file():
         # Get a list of column names from the first line of the film log file
         columns = [x.strip().lower() for x in film_data[0].split("|")]
 
-        # Iterate through the remaining lines of the film log file and create a dictionary for each entry
+        # Iterate through the remaining lines of the film log file
+        # and create a dictionary for each entry
         for line in film_data[1:]:
             log_entry = [x.strip() for x in line.split("|")]
             log_entry = dict(zip(columns, log_entry))
             film_log_data.append(log_entry)
+
     return film_log_data
 
+
 # Imports scans from the scans folder and returns a sorted list of scan files
+
 def import_scans():
     scans = [f for f in scan_path.iterdir() if f.is_file()]
     scans.sort()
+
     return scans
 
+
 # Validates that the number of entries in the film log matches the number of scans
+
 def validate_data(film_log_data, scans):
     if len(film_log_data) == len(scans):
-        print(f"✓ Passed: {len(film_log_data)} entries in the film log and {len(scans)} scans found.")
+        print(
+            f"✓ Passed: {len(film_log_data)} entries in the film log "
+            f"and {len(scans)} scans found."
+        )
     else:
-        raise ValueError(f"✗ Failed: {len(film_log_data)} entries in the film log and {len(scans)} scans found.")
+        raise ValueError(
+            f"✗ Failed: {len(film_log_data)} entries in the film log "
+            f"and {len(scans)} scans found."
+        )
 
-# Combines the film log data with the corresponding scan files and returns a list of dictionaries
+
+# Combines the film log data with the corresponding scan files
+# and validates the frame numbers
+
 def normalize_metadata(film_log_data, scans):
     normalized_metadata = []
 
-    for frame_number, (entry, scan) in enumerate(zip(film_log_data, scans), start=1):
+    for frame_number, (entry, scan) in enumerate(
+        zip(film_log_data, scans),
+        start=1
+    ):
+        # Get the frame number recorded in the film log
+        try:
+            logged_frame_number = int(entry["frame"])
+        except (KeyError, ValueError):
+            raise ValueError(
+                f"✗ Invalid frame number for {scan.name}: "
+                f"{entry.get('frame', '<missing>')}"
+            )
+
+        # Compare the frame number from the log against the
+        # frame number expected based on its position in the file
+        if logged_frame_number != frame_number:
+            raise ValueError(
+                f"✗ Frame number mismatch for {scan.name}: "
+                f"expected frame {frame_number}, "
+                f"but log contains frame {logged_frame_number}."
+            )
+
         normalized_metadata.append({
             "original_file": scan,
             "output_file": None,
@@ -79,7 +130,8 @@ def normalize_metadata(film_log_data, scans):
             "film_stock": film_stock,
             "film_format": film_format,
 
-            "frame_number": frame_number,
+            # Use the validated frame number from the log
+            "frame_number": logged_frame_number,
 
             "timestamp": datetime.fromisoformat(entry["timestamp"]),
             "latitude": float(entry["latitude"]),
@@ -91,7 +143,10 @@ def normalize_metadata(film_log_data, scans):
             "description": entry["description"],
         })
 
+    print(f"✓ Passed: All {len(normalized_metadata)} frame numbers are sequential.")
+
     return normalized_metadata
+
 
 def generate_exif_metadata(frame):
     timestamp = frame["timestamp"]
@@ -107,7 +162,11 @@ def generate_exif_metadata(frame):
         "EXIF:DateTimeOriginal": timestamp.strftime("%Y:%m:%d %H:%M:%S"),
         "EXIF:CreateDate": timestamp.strftime("%Y:%m:%d %H:%M:%S"),
         "EXIF:ModifyDate": timestamp.strftime("%Y:%m:%d %H:%M:%S"),
-        "EXIF:OffsetTimeOriginal": timestamp.strftime("%z")[:3] + ":" + timestamp.strftime("%z")[3:],
+        "EXIF:OffsetTimeOriginal": (
+            timestamp.strftime("%z")[:3]
+            + ":"
+            + timestamp.strftime("%z")[3:]
+        ),
 
         "EXIF:GPSLatitude": abs(latitude),
         "EXIF:GPSLatitudeRef": latitude_ref,
@@ -118,7 +177,7 @@ def generate_exif_metadata(frame):
         "EXIF:Model": frame["camera_model"],
 
         "EXIF:ImageDescription": frame["description"],
-        
+
         "XMP-dc:Title": (
             f"Roll {frame['roll_number']} "
             f"Frame {frame['frame_number']}"
@@ -127,12 +186,12 @@ def generate_exif_metadata(frame):
         "XMP-dc:Subject": [
             f"{frame['film_stock']} {frame['film_format']}"
         ],
-    }   
+    }
 
     return exif_metadata
 
-def create_output_file(frame):
 
+def create_output_file(frame):
     original = frame["original_file"]
 
     output_file = output_path / original.name
@@ -143,65 +202,81 @@ def create_output_file(frame):
 
     return frame
 
+
 def write_exif(frame):
     exif_data = generate_exif_metadata(frame)
 
     with exiftool.ExifToolHelper() as et:
         print(exif_data)
+
         et.set_tags(
             [str(frame["output_file"])],
             exif_data,
             params=["-overwrite_original"]
         )
+
     print("EXIF metadata written to", frame["output_file"])
+
 
 def verify_exif(frame):
     expected = generate_exif_metadata(frame)
 
     with exiftool.ExifToolHelper() as et:
-        actual = et.get_metadata([str(frame["output_file"])])[0]
+        actual = et.get_metadata(
+            [str(frame["output_file"])]
+        )[0]
 
     checks = {
         "DateTimeOriginal": (
             expected["EXIF:DateTimeOriginal"],
             actual.get("EXIF:DateTimeOriginal")
         ),
+
         "OffsetTimeOriginal": (
             expected["EXIF:OffsetTimeOriginal"],
             actual.get("EXIF:OffsetTimeOriginal")
         ),
+
         "GPS Latitude": (
             expected["EXIF:GPSLatitude"],
             actual.get("EXIF:GPSLatitude")
         ),
+
         "GPS Latitude Ref": (
             expected["EXIF:GPSLatitudeRef"],
             actual.get("EXIF:GPSLatitudeRef")
         ),
+
         "GPS Longitude": (
             expected["EXIF:GPSLongitude"],
             actual.get("EXIF:GPSLongitude")
         ),
+
         "GPS Longitude Ref": (
             expected["EXIF:GPSLongitudeRef"],
             actual.get("EXIF:GPSLongitudeRef")
         ),
+
         "Camera Make": (
             expected["EXIF:Make"],
             actual.get("EXIF:Make")
         ),
+
         "Camera Model": (
             expected["EXIF:Model"],
             actual.get("EXIF:Model")
         ),
+
         "Description": (
             expected["EXIF:ImageDescription"],
             actual.get("EXIF:ImageDescription")
         ),
+
         "XMP Title": (
             expected["XMP-dc:Title"],
             actual.get("XMP:Title")
         ),
+
         "XMP Subject": (
             expected["XMP-dc:Subject"][0],
             actual.get("XMP:Subject")
@@ -224,6 +299,7 @@ def verify_exif(frame):
         "failures": failures
     }
 
+
 def generate_report(results):
     total = len(results)
     passed = sum(1 for r in results if r["passed"])
@@ -240,6 +316,7 @@ def generate_report(results):
 
         file.write("Summary\n")
         file.write("-" * 35 + "\n")
+
         file.write(f"Total frames processed: {total}\n")
         file.write(f"Passed: {passed}\n")
         file.write(f"Failed: {failed}\n\n")
@@ -255,16 +332,25 @@ def generate_report(results):
 
                     for failure in result["failures"]:
                         file.write(f"✗ {failure['field']}\n")
-                        file.write(f"  Expected: {failure['expected']}\n")
-                        file.write(f"  Actual:   {failure['actual']}\n\n")
+                        file.write(
+                            f"  Expected: {failure['expected']}\n"
+                        )
+                        file.write(
+                            f"  Actual:   {failure['actual']}\n\n"
+                        )
 
         else:
             file.write("All frames passed verification.\n")
 
     print(f"\nVerification report written to {report_path}")
 
+
+# MAIN PROGRAM
+
 metadata = import_metadata_file()
+
 scans = import_scans()
+
 validate_data(metadata, scans)
 
 normalized = normalize_metadata(
@@ -274,16 +360,12 @@ normalized = normalize_metadata(
 
 for frame in normalized:
     create_output_file(frame)
+
     write_exif(frame)
 
     result = verify_exif(frame)
+
     verification_results.append(result)
 
 
-generate_report(verification_results)
-
-
-
-
-
-
+generate_report(verification_results)   
