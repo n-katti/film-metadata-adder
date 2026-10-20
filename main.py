@@ -18,7 +18,7 @@ film_format = "35mm"
 roll_folder = Path("rolls/")
 roll_folder.mkdir(exist_ok=True)
 
-roll_number = "02"
+roll_number = "03"
 
 
 # ROLL PATH VARIABLES
@@ -53,7 +53,7 @@ verification_results = []
 def import_metadata_file():
     film_log_data = []
 
-    with open(roll_path, "r") as file:
+    with open(roll_path, "r", encoding="utf-8") as file:
         content = file.read()
         film_data = content.splitlines()
 
